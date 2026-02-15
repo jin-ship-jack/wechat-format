@@ -2,77 +2,59 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WeChat Formatting Tool - 开源排版神器</title>
+    <title>WeChat Format - 杰克的排版神器</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
 </head>
-<body class="bg-gray-100 h-screen flex flex-col overflow-hidden">
-
-    <header class="bg-white border-b px-6 py-3 flex justify-between items-center shadow-sm z-10">
-        <div class="flex items-center gap-2">
-            <h1 class="text-xl font-bold text-indigo-600">WeChat Format</h1>
-            <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded">v1.0 Beta</span>
-        </div>
-        <button onclick="copyToWeChat()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium transition-all transform active:scale-95">
-            一键复制到公众号
-        </button>
+<body class="bg-gray-50 h-screen flex flex-col overflow-hidden">
+    <header class="bg-white border-b px-6 py-3 flex justify-between items-center shadow-sm">
+        <h1 class="text-xl font-bold text-indigo-600">WeChat Format</h1>
+        <button onclick="copyToWeChat()" class="bg-indigo-600 text-white px-6 py-2 rounded-full font-bold shadow-md active:scale-95 transition-all">一键复制到公众号</button>
     </header>
 
     <main class="flex-1 flex overflow-hidden">
-        <textarea id="editor" class="w-1/2 p-6 bg-gray-50 resize-none focus:outline-none border-r border-gray-200 text-gray-700" placeholder="在此输入 Markdown 内容..."></textarea>
-        
-        <div class="w-1/2 overflow-y-auto bg-white p-8">
-            <div id="preview-content" class="max-w-[500px] mx-auto min-h-[800px] border p-8 shadow-sm rounded-lg bg-white"></div>
+        <textarea id="editor" class="w-1/2 p-6 focus:outline-none border-r bg-gray-50 resize-none text-gray-700" placeholder="在这里输入 Markdown..."></textarea>
+        <div class="w-1/2 overflow-y-auto p-8 bg-white">
+            <div id="preview-content" class="max-w-[550px] mx-auto min-h-[800px] border p-10 shadow-lg rounded-lg"></div>
             
-            <div class="mt-12 pt-8 border-t border-dashed border-gray-200 text-center">
-                <p class="text-gray-500 text-sm mb-4">如果工具帮到了你，请作者喝杯咖啡 ☕</p>
-                <div class="flex justify-center gap-4">
-                    <a href="https://afdian.net/a/jin-ship-jack" target="_blank" class="bg-purple-600 text-white px-4 py-2 rounded-md text-sm hover:bg-purple-700 transition-colors">在爱发电支持我</a>
-                    <button onclick="document.getElementById('pay-modal').style.display='flex'" class="bg-green-600 text-white px-4 py-2 rounded-md text-sm hover:bg-green-700 transition-colors">微信扫码赞赏</button>
+            <div class="mt-16 pt-10 border-t-2 border-dashed border-gray-100 text-center">
+                <p class="text-gray-600 font-bold mb-6">🚀 喜欢这个项目？请作者喝杯咖啡吧</p>
+                <div class="flex justify-center items-center gap-6 flex-wrap">
+                    <a href="https://afdian.com/a/jin-ship-jack" target="_blank" class="bg-[#946ce6] hover:bg-[#7e56d8] text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all flex items-center gap-2">
+                        ⚡ 在爱发电支持我
+                    </a>
+                    
+                    <div class="bg-white p-3 rounded-xl shadow-md border border-gray-100 inline-block">
+                        <img src="https://github.com/jin-ship-jack/wechat-format/blob/main/pay.jpg?raw=true" class="w-32 h-32 rounded-lg mx-auto mb-2">
+                        <p class="text-[10px] text-gray-400 font-medium">微信扫码赞赏</p>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
-    <div id="pay-modal" class="fixed inset-0 bg-black/70 z-50 hidden justify-center items-center" onclick="this.style.display='none'">
-        <div class="bg-white p-6 rounded-2xl text-center shadow-2xl" onclick="event.stopPropagation()">
-            <p class="font-bold text-lg mb-4">感谢支持开源项目</p>
-            <img src="https://github.com/jin-ship-jack/wechat-format/blob/main/pay.jpg?raw=true" class="w-64 rounded-lg mx-auto shadow-sm">
-            <p class="text-xs text-gray-400 mt-4 underline cursor-pointer">点击空白处关闭</p>
-        </div>
-    </div>
-
     <script>
+        // 渲染与复制逻辑（已优化）
+        const renderer = new marked.Renderer();
+        renderer.code = (code) => `<section style="background:#282c34; border-radius:10px; padding:20px; margin:20px 0;"><pre style="margin:0"><code style="color:#abb2bf; font-size:14px; font-family:monospace;">${hljs.highlightAuto(code).value}</code></pre></section>`;
+        marked.setOptions({ renderer: renderer });
+
         const editor = document.getElementById('editor');
         const preview = document.getElementById('preview-content');
+        const update = () => { preview.innerHTML = marked.parse(editor.value); };
+        editor.addEventListener('input', update);
+        editor.value = "# 你的新工具已开张！\n\n快去 CSDN 发布你的第一篇推广文章吧。\n\n- 微信赞赏码：✅ 已配置\n- 爱发电链接：✅ 已配置";
+        update();
 
-        // 设置 Markdown 默认示例
-        editor.value = "# 欢迎使用\n\n在这里开始你的排版...\n\n- 实时预览\n- 微信样式内联\n- Mac 风格代码块";
-
-        // 渲染函数
-        function render() {
-            preview.innerHTML = marked.parse(editor.value);
-        }
-
-        editor.addEventListener('input', render);
-        render(); // 初始渲染
-
-        // 复制功能
         function copyToWeChat() {
             const range = document.createRange();
             range.selectNode(preview);
             window.getSelection().removeAllRanges();
             window.getSelection().addRange(range);
-            try {
-                document.execCommand('copy');
-                alert('🚀 复制成功！请直接去公众号后台粘贴。');
-            } catch (err) {
-                alert('复制失败，请手动全选预览区内容复制。');
-            }
-            window.getSelection().removeAllRanges();
+            document.execCommand('copy');
+            alert('复制成功！');
         }
     </script>
 </body>
