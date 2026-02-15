@@ -3,54 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WeChat Format - 优雅的公众号排版神器</title>
+    <title>WeChat Format - 优雅的排版工具</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <style>
-        #preview-content { font-family: -apple-system, system-ui, "Segoe UI", Roboto, sans-serif; }
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        #preview-content { font-family: -apple-system, system-ui, sans-serif; word-break: break-all; }
+        /* 修复微信图片悬浮遮挡的问题 */
+        .pay-group:hover .pay-qr { display: block !important; }
     </style>
 </head>
-<body class="bg-slate-50 h-screen flex flex-col overflow-hidden text-slate-900">
+<body class="bg-slate-50 h-screen flex flex-col overflow-hidden">
 
-    <header class="bg-white border-b px-8 py-4 flex justify-between items-center z-10 shadow-sm">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-black shadow-lg shadow-indigo-100">W</div>
-            <div>
-                <h1 class="text-lg font-bold leading-none">WeChat Format</h1>
-                <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-wider font-semibold">Pro Editor for Developers</p>
-            </div>
+    <header class="bg-white border-b px-6 py-3 flex justify-between items-center z-10 shadow-sm">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-indigo-600 rounded flex items-center justify-center text-white font-bold">W</div>
+            <h1 class="text-lg font-bold text-gray-800">WeChat Format</h1>
         </div>
-        <button onclick="copyToWeChat()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-2.5 rounded-full text-sm font-bold shadow-xl shadow-indigo-200 transition-all active:scale-95 transform">
-            一键复制到公众号
-        </button>
+        <button onclick="copyToWeChat()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-full text-sm font-bold transition-all active:scale-95 shadow-lg shadow-indigo-100">一键复制到公众号</button>
     </header>
 
     <main class="flex-1 flex overflow-hidden">
-        <div class="w-1/2 flex flex-col border-r bg-white relative">
-            <div class="absolute top-4 right-4 text-[10px] font-mono text-slate-300 pointer-events-none">MARKDOWN</div>
-            <textarea id="editor" class="flex-1 p-8 focus:outline-none leading-relaxed text-slate-600 font-mono text-sm resize-none bg-slate-50/30" placeholder="在这里输入你的文章内容..."></textarea>
-        </div>
-
-        <div class="w-1/2 flex flex-col bg-slate-50 overflow-y-auto">
-            <div class="p-10 flex justify-center">
-                <div class="bg-white w-full max-w-[550px] shadow-2xl rounded-2xl p-12 min-h-[900px] border border-slate-100">
-                    <div id="preview-content"></div>
-                    
-                    <div class="mt-20 pt-10 border-t-2 border-dashed border-slate-100 text-center">
-                        <p class="text-slate-500 text-sm mb-6 font-medium">🚀 喜欢这个项目？请作者喝杯咖啡吧</p>
-                        <div class="flex justify-center items-center gap-6">
-                            <a href="https://afdian.com/a/jin-ship-jack" target="_blank" class="bg-[#946ce6] hover:bg-[#7e56d8] text-white px-6 py-3 rounded-2xl text-sm font-bold shadow-lg transition-all flex items-center gap-2">
-                                ⚡ 爱发电支持
-                            </a>
-                            <div class="group relative">
-                                <button class="bg-[#07c160] text-white px-6 py-3 rounded-2xl text-sm font-bold shadow-lg">微信扫码赞赏</button>
-                                <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 bg-white p-2 rounded-xl shadow-2xl border border-slate-100 w-32 h-32">
-                                    <img src="https://github.com/jin-ship-jack/wechat-format/blob/main/pay.jpg?raw=true" class="w-full h-full rounded-lg">
-                                </div>
+        <textarea id="editor" class="w-1/2 p-8 focus:outline-none border-r bg-white resize-none font-mono text-sm text-slate-600" placeholder="在此输入 Markdown..."></textarea>
+        
+        <div class="w-1/2 overflow-y-auto bg-slate-50 p-6 flex flex-col items-center">
+            <div class="bg-white w-full max-w-[550px] shadow-xl rounded-xl p-10 min-h-[900px] border border-slate-200">
+                <div id="preview-content" class="min-h-[400px]"></div>
+                
+                <div class="mt-20 pt-10 border-t border-dashed border-slate-200 text-center">
+                    <p class="text-slate-500 text-sm mb-6 italic">🚀 觉得好用？请作者喝杯咖啡吧</p>
+                    <div class="flex justify-center items-center gap-4 relative">
+                        <a href="https://afdian.com/a/jin-ship-jack" target="_blank" class="bg-[#946ce6] hover:bg-[#7e56d8] text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-md transition-all flex items-center gap-2">
+                            ⚡ 爱发电支持
+                        </a>
+                        
+                        <div class="pay-group relative">
+                            <button class="bg-[#07c160] hover:bg-[#06ad56] text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-md transition-all">微信扫码赞赏</button>
+                            <div class="pay-qr hidden absolute bottom-full left-1/2 -translate-x-1/2 mb-4 p-3 bg-white shadow-2xl rounded-2xl border border-slate-100 w-48">
+                                <img src="https://github.com/jin-ship-jack/wechat-format/blob/main/pay.jpg?raw=true" class="w-full rounded-lg">
+                                <p class="text-[10px] text-gray-400 mt-2">感谢您的支持</p>
                             </div>
                         </div>
                     </div>
@@ -61,31 +53,29 @@
 
     <script>
         const THEME = {
-            h1: 'display:block; text-align:center; font-size:24px; font-weight:bold; color:#1e293b; margin:35px 0 20px; border-bottom:3px solid #6366f1; padding-bottom:12px;',
-            h2: 'display:block; font-size:20px; font-weight:bold; color:#1e293b; margin:30px 0 15px; border-left:6px solid #6366f1; padding-left:15px; background:#f8fafc;',
-            p: 'display:block; font-size:16px; color:#475569; line-height:1.8; margin-bottom:18px; text-align:justify;',
-            pre: 'display:block; background:#1e1e1e; border-radius:12px; padding:20px; margin:25px 0; overflow-x:auto; shadow:lg;',
-            code: 'color:#d1d5db; font-size:14px; font-family:"Fira Code",monospace;',
-            blockquote: 'display:block; border-left:4px solid #cbd5e1; background:#f1f5f9; padding:18px 25px; margin:25px 0; color:#64748b; border-radius:0 8px 8px 0;'
+            h1: 'display:block; text-align:center; font-size:22px; font-weight:bold; color:#333; margin:30px 0 20px; border-bottom:2px solid #6366f1; padding-bottom:8px;',
+            h2: 'display:block; font-size:18px; font-weight:bold; color:#333; margin:25px 0 15px; border-left:4px solid #6366f1; padding-left:12px;',
+            p: 'display:block; font-size:15px; color:#444; line-height:1.7; margin-bottom:15px; text-align:justify;',
+            pre: 'display:block; background:#1e1e1e; border-radius:10px; padding:15px; margin:20px 0; overflow-x:auto;',
+            code: 'color:#d1d5db; font-size:13px; font-family:monospace;'
         };
 
         const renderer = new marked.Renderer();
         renderer.heading = (t, l) => `<h${l} style="${THEME['h'+l] || THEME.h2}">${t}</h${l}>`;
         renderer.paragraph = (t) => `<p style="${THEME.p}">${t}</p>`;
-        renderer.blockquote = (q) => `<blockquote style="${THEME.blockquote}">${q}</blockquote>`;
         renderer.code = (code) => {
-            const dots = '<div style="display:flex; gap:6px; margin-bottom:15px;"><span style="width:10px; height:10px; background:#ff5f56; border-radius:50%"></span><span style="width:10px; height:10px; background:#ffbd2e; border-radius:50%"></span><span style="width:10px; height:10px; background:#27c93f; border-radius:50%"></span></div>';
+            const dots = '<div style="display:flex; gap:4px; margin-bottom:10px;"><span style="width:8px; height:8px; background:#ff5f56; border-radius:50%"></span><span style="width:8px; height:8px; background:#ffbd2e; border-radius:50%"></span><span style="width:8px; height:8px; background:#27c93f; border-radius:50%"></span></div>';
             return `<section style="${THEME.pre}">${dots}<pre style="margin:0"><code style="${THEME.code}">${hljs.highlightAuto(code).value}</code></pre></section>`;
         };
 
-        marked.setOptions({ renderer: renderer, breaks: true });
+        marked.setOptions({ renderer: renderer });
         const editor = document.getElementById('editor');
         const preview = document.getElementById('preview-content');
         const update = () => { preview.innerHTML = marked.parse(editor.value); };
         editor.addEventListener('input', update);
 
-        // 正式的初始内容
-        editor.value = "# 欢迎使用 WeChat Format\n\n这是一款专为开发者设计的公众号排版工具。支持 **Markdown** 语法，并提供极致的代码展示效果。\n\n## 为什么选择它？\n\n- **实时预览**：所见即所得，无需反复调试。\n- **代码美化**：内置 Mac 风格代码块，让你的代码更具专业感。\n\n```javascript\n// 示例代码块\nfunction welcome() {\n  console.log(\"Hello, WeChat Creator!\");\n}\n```\n\n> 优雅的排版是专业内容的第一步。";
+        // 恢复正式文字
+        editor.value = "# 欢迎使用 WeChat Format\n\n这是一款专为开发者设计的公众号排版工具。支持 **Markdown** 语法，并提供极致的代码展示效果。\n\n## 为什么选择它？\n\n- **实时预览**：所见即所得，无需反复调试。\n- **代码美化**：内置 Mac 风格代码块。\n\n```javascript\n// 示例代码\nfunction hello() {\n  console.log(\"Hello WeChat!\");\n}\n```";
         update();
 
         function copyToWeChat() {
@@ -94,7 +84,7 @@
             window.getSelection().removeAllRanges();
             window.getSelection().addRange(range);
             document.execCommand('copy');
-            alert('🚀 复制成功！请直接去公众号后台粘贴。');
+            alert('复制成功！');
         }
     </script>
 </body>
