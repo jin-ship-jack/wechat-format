@@ -3,281 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Markdown 转微信公众号排版工具</title>
-    <!-- 引入 Tailwind CSS (开发版脚本，用于单文件快速构建) -->
+    <title>WeChat Formatting Tool - 开源排版神器</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- 引入 Marked.js 用于解析 Markdown -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- 引入 Highlight.js 用于代码高亮 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-    
-    <style>
-        /* 自定义滚动条样式 */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
-        
-        /* 预览区域的基础样式重置 */
-        #preview-content {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-        
-        /* 强制编辑器字体 */
-        textarea {
-            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
-        }
-    </style>
 </head>
 <body class="bg-gray-100 h-screen flex flex-col overflow-hidden">
 
-    <!-- 顶部导航栏 -->
-    <header class="bg-white border-b border-gray-200 shadow-sm z-10 flex justify-between items-center px-6 py-3">
+    <header class="bg-white border-b px-6 py-3 flex justify-between items-center shadow-sm z-10">
         <div class="flex items-center gap-2">
-            <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
-            <h1 class="text-xl font-bold text-gray-800">WeChat Formatting Tool</h1>
-            <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full ml-2">Pro</span>
+            <h1 class="text-xl font-bold text-indigo-600">WeChat Format</h1>
+            <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded">v1.0 Beta</span>
         </div>
-        <button onclick="copyToWeChat()" class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium transition-all transform active:scale-95 shadow-lg shadow-indigo-200">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+        <button onclick="copyToWeChat()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium transition-all transform active:scale-95">
             一键复制到公众号
         </button>
     </header>
 
-    <!-- 主体区域：两栏布局 -->
     <main class="flex-1 flex overflow-hidden">
-        <!-- 左侧：输入区 -->
-        <div class="w-1/2 flex flex-col border-r border-gray-200 bg-gray-50">
-            <div class="px-4 py-2 bg-gray-100 border-b text-xs text-gray-500 font-medium uppercase tracking-wider">Markdown Source</div>
-            <textarea id="editor" class="flex-1 w-full p-6 bg-gray-50 resize-none focus:outline-none text-gray-700 text-base leading-relaxed" placeholder="在此输入 Markdown 内容..."></textarea>
-        </div>
-
-        <!-- 右侧：预览区 -->
-        <div class="w-1/2 flex flex-col bg-white relative">
-            <div class="px-4 py-2 bg-white border-b text-xs text-gray-500 font-medium uppercase tracking-wider flex justify-between">
-                <span>Real-time Preview</span>
-                <span class="text-xs text-indigo-500">已应用微信样式</span>
-            </div>
-            <!-- 手机模拟框容器 -->
-            <div class="flex-1 overflow-y-auto bg-gray-100 p-8 flex justify-center">
-                <div class="bg-white w-full max-w-[500px] min-h-[800px] shadow-xl p-8 rounded-none sm:rounded-lg" id="preview-container">
-                    <!-- 内容渲染区域 -->
-                    <div id="preview-content"></div>
-                    
-                    <!-- 底部签名示例 -->
-                    <div style="margin-top: 50px; text-align: center; font-size: 12px; color: #ccc;">
-                        — End —
-                    </div>
+        <textarea id="editor" class="w-1/2 p-6 bg-gray-50 resize-none focus:outline-none border-r border-gray-200 text-gray-700" placeholder="在此输入 Markdown 内容..."></textarea>
+        
+        <div class="w-1/2 overflow-y-auto bg-white p-8">
+            <div id="preview-content" class="max-w-[500px] mx-auto min-h-[800px] border p-8 shadow-sm rounded-lg bg-white"></div>
+            
+            <div class="mt-12 pt-8 border-t border-dashed border-gray-200 text-center">
+                <p class="text-gray-500 text-sm mb-4">如果工具帮到了你，请作者喝杯咖啡 ☕</p>
+                <div class="flex justify-center gap-4">
+                    <a href="https://afdian.net/a/jin-ship-jack" target="_blank" class="bg-purple-600 text-white px-4 py-2 rounded-md text-sm hover:bg-purple-700 transition-colors">在爱发电支持我</a>
+                    <button onclick="document.getElementById('pay-modal').style.display='flex'" class="bg-green-600 text-white px-4 py-2 rounded-md text-sm hover:bg-green-700 transition-colors">微信扫码赞赏</button>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- 复制成功的提示框 -->
-    <div id="toast" class="fixed top-20 right-1/2 translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-xl transform transition-all duration-300 opacity-0 pointer-events-none translate-y-4">
-        ✅ 已复制！请直接粘贴到公众号后台
+    <div id="pay-modal" class="fixed inset-0 bg-black/70 z-50 hidden justify-center items-center" onclick="this.style.display='none'">
+        <div class="bg-white p-6 rounded-2xl text-center shadow-2xl" onclick="event.stopPropagation()">
+            <p class="font-bold text-lg mb-4">感谢支持开源项目</p>
+            <img src="https://github.com/jin-ship-jack/wechat-format/blob/main/pay.jpg?raw=true" class="w-64 rounded-lg mx-auto shadow-sm">
+            <p class="text-xs text-gray-400 mt-4 underline cursor-pointer">点击空白处关闭</p>
+        </div>
     </div>
 
     <script>
-        // --- 1. 配置主题样式 ---
-        // 关键逻辑：微信不支持 class，必须把样式通过 JS 注入到 style 属性中
-        const THEME = {
-            baseColor: '#5352ed', // 主色调
-            textColor: '#3f3f3f',
-            
-            // 标题样式
-            h1: `display: block; text-align: center; font-weight: bold; font-size: 22px; margin-top: 30px; margin-bottom: 20px; color: #333; line-height: 1.4; border-bottom: 2px solid #5352ed; padding-bottom: 10px;`,
-            h2: `display: block; font-size: 18px; font-weight: bold; margin-top: 25px; margin-bottom: 15px; padding-left: 10px; border-left: 5px solid #5352ed; color: #333; line-height: 1.4;`,
-            h3: `display: block; font-size: 16px; font-weight: bold; margin-top: 20px; margin-bottom: 10px; color: #333; line-height: 1.4;`,
-            
-            // 正文样式
-            p: `display: block; font-size: 15px; letter-spacing: 0.5px; line-height: 1.75; margin-bottom: 15px; color: #3f3f3f; text-align: justify;`,
-            
-            // 列表样式
-            ul: `display: block; list-style-type: disc; margin-left: 0; padding-left: 20px; margin-bottom: 15px; font-size: 15px; color: #3f3f3f; line-height: 1.75;`,
-            ol: `display: block; list-style-type: decimal; margin-left: 0; padding-left: 20px; margin-bottom: 15px; font-size: 15px; color: #3f3f3f; line-height: 1.75;`,
-            li: `margin-bottom: 5px;`,
-            
-            // 引用样式
-            blockquote: `display: block; border-left: 4px solid #dfe2e5; background-color: #f6f8fa; padding: 15px; margin: 20px 0; color: #6a737d; font-size: 14px; line-height: 1.6; border-radius: 4px;`,
-            
-            // 代码块整体容器（Mac 风格）
-            pre: `display: block; background: #282c34; border-radius: 8px; padding: 15px; margin: 20px 0; overflow-x: auto; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative;`,
-            code_block: `color: #abb2bf; font-size: 13px; line-height: 1.5; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;`,
-            
-            // 行内代码
-            codespan: `background-color: #f0f0f0; color: #d63384; padding: 2px 5px; border-radius: 4px; font-size: 14px; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;`,
-            
-            // 链接
-            link: `color: #5352ed; text-decoration: none; border-bottom: 1px dashed #5352ed;`,
-            
-            // 图片
-            image: `display: block; margin: 20px auto; max-width: 100%; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);`,
-            
-            // 分割线
-            hr: `display: block; border: 0; border-top: 1px dashed #ccc; margin: 30px 0;`
-        };
-
-        // --- 2. 初始化 Marked.js 并配置自定义渲染器 ---
-        const renderer = new marked.Renderer();
-
-        renderer.heading = (text, level) => {
-            const style = THEME[`h${level}`] || THEME.h3;
-            return `<h${level} style="${style}">${text}</h${level}>`;
-        };
-
-        renderer.paragraph = (text) => {
-            // 如果段落里只有图片，移除 margin，避免间距过大
-            if (text.trim().startsWith('<img')) {
-                return `<p style="margin-bottom: 15px; text-align: center;">${text}</p>`;
-            }
-            return `<p style="${THEME.p}">${text}</p>`;
-        };
-
-        renderer.blockquote = (quote) => {
-            return `<blockquote style="${THEME.blockquote}">${quote}</blockquote>`;
-        };
-
-        renderer.list = (body, ordered, start) => {
-            const type = ordered ? 'ol' : 'ul';
-            return `<${type} style="${THEME[type]}">${body}</${type}>`;
-        };
-
-        renderer.listitem = (text) => {
-            return `<li style="${THEME.li}">${text}</li>`;
-        };
-
-        renderer.codespan = (text) => {
-            return `<code style="${THEME.codespan}">${text}</code>`;
-        };
-
-        renderer.link = (href, title, text) => {
-            return `<a href="${href}" title="${title || ''}" style="${THEME.link}">${text}</a>`;
-        };
-
-        renderer.image = (href, title, text) => {
-            return `<img src="${href}" alt="${text}" style="${THEME.image}">`;
-        };
-
-        renderer.hr = () => {
-            return `<hr style="${THEME.hr}">`;
-        };
-
-        // 特殊处理代码块：增加 Mac 窗口红黄绿点效果
-        renderer.code = (code, infostring) => {
-            const lang = (infostring || '').match(/\S*/)[0];
-            
-            // Mac 窗口圆点 HTML
-            const macDots = `
-                <div style="display: flex; gap: 6px; margin-bottom: 10px;">
-                    <span style="width: 10px; height: 10px; background-color: #ff5f56; border-radius: 50%;"></span>
-                    <span style="width: 10px; height: 10px; background-color: #ffbd2e; border-radius: 50%;"></span>
-                    <span style="width: 10px; height: 10px; background-color: #27c93f; border-radius: 50%;"></span>
-                </div>
-            `;
-
-            // 高亮处理
-            const validLang = !!(lang && hljs.getLanguage(lang));
-            const highlighted = validLang ? hljs.highlight(code, { language: lang }).value : hljs.highlightAuto(code).value;
-
-            return `
-                <section style="${THEME.pre}">
-                    ${macDots}
-                    <pre style="margin: 0; padding: 0; background: transparent;"><code class="hljs ${lang}" style="${THEME.code_block} background: transparent; padding: 0;">${highlighted}</code></pre>
-                </section>
-            `;
-        };
-
-        marked.setOptions({
-            renderer: renderer,
-            breaks: true,
-            gfm: true
-        });
-
-        // --- 3. 核心逻辑：输入与渲染 ---
         const editor = document.getElementById('editor');
-        const previewContent = document.getElementById('preview-content');
+        const preview = document.getElementById('preview-content');
 
-        const defaultContent = `# 欢迎使用 Markdown 转公众号工具
+        // 设置 Markdown 默认示例
+        editor.value = "# 欢迎使用\n\n在这里开始你的排版...\n\n- 实时预览\n- 微信样式内联\n- Mac 风格代码块";
 
-这是一个 **单文件** 的 Markdown 编辑器，专为微信公众号排版设计。
-
-## 功能特点
-
-1. **实时预览**：左侧输入，右侧即时显示效果。
-2. **样式内联**：点击复制后，CSS 会自动转为行内样式，**完美粘贴到公众号后台**。
-3. **精美代码块**：支持 Mac 风格的代码高亮。
-
-## 代码示例
-
-\`\`\`javascript
-function sayHello() {
-    console.log("Hello, WeChat!");
-    const style = "专业";
-    return style;
-}
-\`\`\`
-
-## 引用示例
-
-> "设计不仅仅是外观和感觉。设计就是它的运作方式。"  
-> —— 史蒂夫·乔布斯
-
-## 列表测试
-
-*   第一点内容
-*   第二点内容
-    *   子项目
-*   第三点内容
-
-快去试试粘贴自己的文章吧！
-`;
-
-        // 初始化
-        editor.value = defaultContent;
-        render();
-
-        // 监听输入
-        editor.addEventListener('input', render);
-
+        // 渲染函数
         function render() {
-            const markdown = editor.value;
-            const html = marked.parse(markdown);
-            previewContent.innerHTML = html;
+            preview.innerHTML = marked.parse(editor.value);
         }
 
-        // --- 4. 复制功能 ---
+        editor.addEventListener('input', render);
+        render(); // 初始渲染
+
+        // 复制功能
         function copyToWeChat() {
-            const element = document.getElementById('preview-content');
-            
-            // 这里的核心是 selection 和 clipboard API
-            const selection = window.getSelection();
             const range = document.createRange();
-            
-            range.selectNodeContents(element);
-            selection.removeAllRanges();
-            selection.addRange(range);
-            
+            range.selectNode(preview);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
             try {
-                // 使用 execCommand 是兼容性最好的方式，尽管已废弃，但对富文本复制支持最稳
                 document.execCommand('copy');
-                showToast();
+                alert('🚀 复制成功！请直接去公众号后台粘贴。');
             } catch (err) {
-                alert('复制失败，请手动全选右侧内容复制。');
-                console.error(err);
+                alert('复制失败，请手动全选预览区内容复制。');
             }
-            
-            selection.removeAllRanges();
-        }
-
-        function showToast() {
-            const toast = document.getElementById('toast');
-            toast.classList.remove('opacity-0', 'translate-y-4');
-            
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-4');
-            }, 2000);
+            window.getSelection().removeAllRanges();
         }
     </script>
 </body>
